@@ -7,7 +7,6 @@ const http = require('http').Server(app);
 
 const PORT = process.env.PORT || 3000;
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -20,7 +19,6 @@ const server = http.listen(PORT, () => {
   console.log('Server listening on localhost:3000');
 })
 
-
 app.post('/api/get-link', async (req, res) => {
   let page = req.body.linkNCT;
   try {
@@ -31,11 +29,11 @@ app.post('/api/get-link', async (req, res) => {
   }
 });
 
-
 async function getLink(page) {
-  let link = '';
+  let result = {};
   const body = await axios.get(page);
   const $ = cheerio.load(body.data);
+  result.title = $('title').text();
   const flashPlayer = $('#flashPlayer').next().html();
   const flashxml = 'https://www.nhaccuatui.com/flash/xml?html5=true&key1=';
   if (flashPlayer.includes(flashxml)) {
@@ -44,7 +42,9 @@ async function getLink(page) {
     const body = await axios.get(location);
     const $ = cheerio.load(body.data);
     const cdata = $('location').html();
-    link = cdata.substring(cdata.indexOf('https'), cdata.indexOf(']'));
+    const coverImage = $('coverimage').html();
+    result.link = cdata.substring(cdata.indexOf('https'), cdata.indexOf(']'));
+    result.coverImage = coverImage.substring(coverImage.indexOf('https'), coverImage.indexOf(']'));
   }
-  return link;
+  return result;
 }
