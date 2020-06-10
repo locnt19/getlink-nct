@@ -1,51 +1,47 @@
-const request = require('request');
+const express = require('express');
+const path = require('path');
 const cheerio = require('cheerio');
+const axios = require('axios');
+const app = express();
+const http = require('http').Server(app);
 
-let page = 'https://www.nhaccuatui.com/bai-hat/tinh-sau-thien-thu-muon-loi-vo-dinh-hieu.wVx961NiDHqY.html';
-let location = '';
-let download = '';
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// console.log('URL Page: ' + page);
+app.get('/', (req, res) => {
+  res.render('index.html');
+})
 
-request(page, function (err, res, body) {
-  if (err) console.log('Error: ' + err);
+const server = http.listen(3000, () => {
+  console.log('Server listening on localhost:3000');
+})
 
-  // Check status code (200 is HTTP OK)
-  if (res.statusCode === 200) {
-    // Parse the document body
-    const $ = cheerio.load(body);
 
-    // console.log('Page title: ' + $('title').text());
-    // console.log('================================================================================================');
-
-    const data = $('#flashPlayer').next().html();
-
-    const flashxml = 'https://www.nhaccuatui.com/flash/xml?html5=true&key1=';
-
-    if (data.includes(flashxml)) {
-      let text = data.substring(data.indexOf(flashxml));
-      location = text.substring(0, text.indexOf('"'));
-
-      // console.log('URI DATA OF SONG: ' + location);
-      // console.log('================================ STEP 1 DONE ================================');
-
-      request(location, function (err, res, body) {
-        // if (err) console.log(err);
-
-        if (res.statusCode === 200) {
-          const $ = cheerio.load(body);
-          const data = $('location').html();
-
-          // console.log(data);
-
-          download = data.substring(data.indexOf('https'), data.indexOf(']'));
-
-          console.log('URI DOWNLOAD: ' + download);
-          console.log('================================ DONE ================================');
-        }
-      });
-    }
-  } else {
-    res.send('Cant access URL.')
+app.post('/api/get-link', async (req, res) => {
+  let page = req.body.linkNCT;
+  try {
+    let done = await getLink(page);
+    res.send(done);
+  } catch (error) {
+    res.send();
   }
 });
+
+
+async function getLink(page) {
+  let link = '';
+  const body = await axios.get(page);
+  const $ = cheerio.load(body.data);
+  const flashPlayer = $('#flashPlayer').next().html();
+  const flashxml = 'https://www.nhaccuatui.com/flash/xml?html5=true&key1=';
+  if (flashPlayer.includes(flashxml)) {
+    const text = flashPlayer.substring(flashPlayer.indexOf(flashxml));
+    const location = text.substring(0, text.indexOf('"'));
+    const body = await axios.get(location);
+    const $ = cheerio.load(body.data);
+    const cdata = $('location').html();
+    link = cdata.substring(cdata.indexOf('https'), cdata.indexOf(']'));
+  }
+  return link;
+}
