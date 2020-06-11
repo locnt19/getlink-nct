@@ -1,4 +1,3 @@
-const logger = require('morgan');
 const express = require('express');
 const path = require('path');
 const cheerio = require('cheerio');
@@ -9,7 +8,6 @@ const http = require('http').Server(app);
 
 const PORT = process.env.PORT || 3000;
 
-app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -32,7 +30,8 @@ app.post('/api/get-link', async (req, res) => {
 
 // Handle 404
 app.use(function (req, res) {
-  res.status(404).send('Page not Found');
+  res.status(404);
+  res.render('404.html');
 });
 
 // Handle 500
@@ -45,19 +44,25 @@ async function getLink(page) {
   let result = {
     title: '',
     coverImage: '',
-    link: ''
+    link: '',
+    message: ''
   };
-  const body = await axios.get(page);
-  const $ = cheerio.load(body.data);
-  result.title = $('title').text();
+  let body = await axios.get(page);
+  let $ = cheerio.load(body.data);
   const flashPlayer = $('#box_playing_id').html();
   const flashxml = 'https://www.nhaccuatui.com/flash/xml?html5=true&key1=';
-  result.flashPlayer = flashPlayer;
+  result.title = $('title').text();
+  // result.flashPlayer = flashPlayer;
+
+  // Copyright in your country
+  if ($('.txt-alert-universal').text().length > 0) {
+    return result.message = $('.txt-alert-universal').text();
+  };
   if (flashPlayer.indexOf(flashxml) !== -1) {
     const text = flashPlayer.substring(flashPlayer.indexOf(flashxml));
     const location = text.substring(0, text.indexOf('"'));
-    const body = await axios.get(location);
-    const $ = cheerio.load(body.data);
+    body = await axios.get(location);
+    $ = cheerio.load(body.data);
     const cdata = $('location').html();
     const coverImage = $('coverimage').html();
     result.link = cdata.substring(cdata.indexOf('https'), cdata.indexOf(']'));

@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const $title = document.querySelector('#title');
   const $coverImage = document.querySelector('#coverImage');
   const $play = document.querySelector('#play');
+  const $message = document.querySelector('#message');
+  const $hiddenAll = document.querySelector('#hidden-all');
 
   const xhttp = new XMLHttpRequest();
 
@@ -25,9 +27,13 @@ document.addEventListener('DOMContentLoaded', function () {
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.send(`linkNCT=${$input.value}`);
     xhttp.onreadystatechange = function () {
-      console.log(this);
       if (this.readyState === 4 && this.status === 200) {
         const data = JSON.parse(this.response);
+        if (data.message.length > 0) {
+          $message.innerHTML = data.message;
+          $hiddenAll.remove();
+          return;
+        }
         $play.classList.remove('d-none');
         $fakeForm.classList.add('d-none');
         $output.classList.add('d-inline-block');
@@ -43,7 +49,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
       if (this.status !== 200) {
-        alert('Wrong something!');
+        $hiddenAll.remove();
+        $message.innerHTML = 'Wrong something.';
       }
     }
   });
