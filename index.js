@@ -7,6 +7,7 @@ const axios = require('axios');
 const app = express();
 const http = require('http').Server(app);
 
+const HOSTNAME = process.env.HOSTNAME || 'localhost';
 const PORT = process.env.PORT || 3000;
 
 app.use(logger('dev'));
@@ -63,12 +64,15 @@ async function getLink(page) {
     } else {
       result.coverImage = '';
     }
+  } else {
+    result.link = '';
+    result.coverImage = '';
   }
   // console.log(result);
   return result;
 }
 
 
-const server = http.listen(PORT, () => {
-  console.log(`Server listening on localhost:${PORT}`);
+const server = http.listen(PORT, HOSTNAME, () => {
+  console.log(`Server listening on ${HOSTNAME}:${PORT}`);
 })
