@@ -14,20 +14,20 @@ document.addEventListener('DOMContentLoaded', function () {
   $input.addEventListener('blur', function () {
     console.log($input.value);
     if ($input.value !== '') {
-      console.log('true');
       $submit.removeAttribute('disabled');
     } else {
       $submit.setAttribute('disabled', true);
     }
   });
-  
+
   $submit.addEventListener('click', function () {
     $submit.setAttribute('disabled', true);
     xhttp.open('POST', '/api/get-link', true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.send(`linkNCT=${$input.value}`);
     xhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
+      console.log(this);
+      if (this.readyState === 4 && this.status === 200) {
         const data = JSON.parse(this.response);
         $play.classList.remove('d-none');
         $fakeForm.classList.add('d-none');
@@ -42,8 +42,9 @@ document.addEventListener('DOMContentLoaded', function () {
           $coverImage.setAttribute('alt', data.title);
           $coverImage.setAttribute('src', data.coverImage);
         }
-      } else {
-        alert('Error something!')
+      }
+      if (this.status !== 200) {
+        alert('Wrong something!');
       }
     }
   });
