@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cheerio = require('cheerio');
+const favicon = require('serve-favicon');
 const axios = require('axios');
 const app = express();
 const http = require('http').Server(app);
@@ -10,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
 
 app.get('/', (req, res) => {
   res.render('index.html');
