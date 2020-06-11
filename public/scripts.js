@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('Pure Javascript');  
+  console.log('Pure Javascript');
   console.log('DOM is fully loaded');
   const $input = document.querySelector('#input');
   const $submit = document.querySelector('#get-input');
@@ -24,14 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
         $output.classList.add('d-inline-block');
         $title.classList.remove('d-none');
         $title.innerHTML = data.title;
-        document.title = data.title + '| Loc Thanh Nguyen';
-        if (data.coverImage.length > 0) {
+        document.title = data.title + ' | Loc Thanh Nguyen';
+        $play.setAttribute('src', data.link);
+        $output.setAttribute('href', data.link);
+        if (data.coverImage !== '') {
           $coverImage.classList.remove('d-none');
           $coverImage.setAttribute('alt', data.title);
           $coverImage.setAttribute('src', data.coverImage);
         }
-        $play.setAttribute('src', data.link);
-        $output.setAttribute('href', data.link);
       }
     }
   });
