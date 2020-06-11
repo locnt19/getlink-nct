@@ -30,8 +30,7 @@ app.post('/api/get-link', async (req, res) => {
 
 // Handle 404
 app.use(function (req, res) {
-  res.status(404);
-  res.render('404.html');
+  res.status(404).send('Page not found.');
 });
 
 // Handle 500
