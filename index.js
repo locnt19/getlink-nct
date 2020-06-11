@@ -42,13 +42,17 @@ app.use(function(error, req, res, next) {
 
 
 async function getLink(page) {
-  let result = {};
+  let result = {
+    title: '',
+    coverImage: '',
+    link: ''
+  };
   const body = await axios.get(page);
   const $ = cheerio.load(body.data);
   result.title = $('title').text();
   const flashPlayer = $('#flashPlayer').next().html();
   const flashxml = 'https://www.nhaccuatui.com/flash/xml?html5=true&key1=';
-  if (flashPlayer.includes(flashxml)) {
+  if (flashPlayer.indexOf(flashxml) !== -1) {
     const text = flashPlayer.substring(flashPlayer.indexOf(flashxml));
     const location = text.substring(0, text.indexOf('"'));
     result.location = location;
@@ -56,16 +60,10 @@ async function getLink(page) {
     const $ = cheerio.load(body.data);
     const cdata = $('location').html();
     const coverImage = $('coverimage').html();
-    // console.log(location);
     result.link = cdata.substring(cdata.indexOf('https'), cdata.indexOf(']'));
-    if (coverImage.includes('https')) {
+    if (coverImage.indexOf('https') !== -1) {
       result.coverImage = coverImage.substring(coverImage.indexOf('https'), coverImage.indexOf(']'));
-    } else {
-      result.coverImage = '';
     }
-  } else {
-    result.link = '';
-    result.coverImage = '';
   }
   // console.log(result);
   return result;
