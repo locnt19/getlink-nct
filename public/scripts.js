@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+  console.log('Pure Javascript');  
   console.log('DOM is fully loaded');
   const $input = document.querySelector('#input');
   const $submit = document.querySelector('#get-input');
@@ -11,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const xhttp = new XMLHttpRequest();
 
   $submit.addEventListener('click', function () {
+    this.setAttribute('disabled', true);
     xhttp.open('POST', '/api/get-link', true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.send(`linkNCT=${$input.value}`);
@@ -21,10 +23,13 @@ document.addEventListener('DOMContentLoaded', function () {
         $fakeForm.classList.add('d-none');
         $output.classList.add('d-inline-block');
         $title.classList.remove('d-none');
-        $coverImage.classList.remove('d-none');
         $title.innerHTML = data.title;
-        $coverImage.setAttribute('alt', data.title);
-        $coverImage.setAttribute('src', data.coverImage);
+        document.title = data.title + '| Loc Thanh Nguyen';
+        if (data.coverImage.length > 0) {
+          $coverImage.classList.remove('d-none');
+          $coverImage.setAttribute('alt', data.title);
+          $coverImage.setAttribute('src', data.coverImage);
+        }
         $play.setAttribute('src', data.link);
         $output.setAttribute('href', data.link);
       }

@@ -43,8 +43,14 @@ async function getLink(page) {
     const $ = cheerio.load(body.data);
     const cdata = $('location').html();
     const coverImage = $('coverimage').html();
+    // console.log(location);
     result.link = cdata.substring(cdata.indexOf('https'), cdata.indexOf(']'));
-    result.coverImage = coverImage.substring(coverImage.indexOf('https'), coverImage.indexOf(']'));
+    if (coverImage.includes('https')) {
+      result.coverImage = coverImage.substring(coverImage.indexOf('https'), coverImage.indexOf(']'));
+    } else {
+      result.coverImage = '';
+    }
   }
+  // console.log(result);
   return result;
 }
