@@ -1,3 +1,4 @@
+// const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cheerio = require('cheerio');
@@ -13,12 +14,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
 
+// Handle 404
+app.use(function(req, res) {
+  res.status(404).send('404: Page not Found');
+});
+
+// Handle 500
+app.use(function(error, req, res, next) {
+  res.status(500).send('500: Internal Server Error');
+});
+
+
+// routes
 app.get('/', (req, res) => {
   res.render('index.html');
-})
-
-const server = http.listen(PORT, () => {
-  console.log('Server listening on localhost:3000');
 })
 
 app.post('/api/get-link', async (req, res) => {
@@ -30,6 +39,7 @@ app.post('/api/get-link', async (req, res) => {
     res.send();
   }
 });
+
 
 async function getLink(page) {
   let result = {};
@@ -56,3 +66,8 @@ async function getLink(page) {
   // console.log(result);
   return result;
 }
+
+
+const server = http.listen(PORT, () => {
+  console.log(`Server listening on localhost:${PORT}`);
+})
