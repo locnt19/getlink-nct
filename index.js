@@ -52,6 +52,8 @@ async function getLink(page) {
   result.title = $('title').text();
   const flashPlayer = $('#flashPlayer').next().html();
   const flashxml = 'https://www.nhaccuatui.com/flash/xml?html5=true&key1=';
+  result.flashxml = flashxml;
+  result.flashPlayer = flashPlayer;
   if (flashPlayer.indexOf(flashxml) !== -1) {
     const text = flashPlayer.substring(flashPlayer.indexOf(flashxml));
     const location = text.substring(0, text.indexOf('"'));
