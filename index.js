@@ -55,7 +55,8 @@ async function getLink(page) {
 
   // Copyright in your country
   if ($('.txt-alert-universal').text().length > 0) {
-    return result.message = $('.txt-alert-universal').text();
+    result.message = $('.txt-alert-universal').text();
+    return;
   };
   if (flashPlayer.indexOf(flashxml) !== -1) {
     const text = flashPlayer.substring(flashPlayer.indexOf(flashxml));
