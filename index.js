@@ -51,11 +51,11 @@ async function getLink(page) {
   if (flashPlayer.includes(flashxml)) {
     const text = flashPlayer.substring(flashPlayer.indexOf(flashxml));
     const location = text.substring(0, text.indexOf('"'));
+    result.location = location;
     const body = await axios.get(location);
     const $ = cheerio.load(body.data);
     const cdata = $('location').html();
     const coverImage = $('coverimage').html();
-    result.body = coverImage;
     // console.log(location);
     result.link = cdata.substring(cdata.indexOf('https'), cdata.indexOf(']'));
     if (coverImage.includes('https')) {
