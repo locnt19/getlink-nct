@@ -55,6 +55,7 @@ async function getLink(page) {
     const $ = cheerio.load(body.data);
     const cdata = $('location').html();
     const coverImage = $('coverimage').html();
+    result.body = coverImage;
     // console.log(location);
     result.link = cdata.substring(cdata.indexOf('https'), cdata.indexOf(']'));
     if (coverImage.includes('https')) {

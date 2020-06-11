@@ -12,8 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const xhttp = new XMLHttpRequest();
 
   $input.addEventListener('blur', function () {
-    console.log($input.value);
-    if ($input.value !== '') {
+    if ($input.value.trim() !== '') {
       $submit.removeAttribute('disabled');
     } else {
       $submit.setAttribute('disabled', true);
